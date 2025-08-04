@@ -1,0 +1,1955 @@
+---ProductManagementFileHandling---
+
+Product.java
+package productManagementSystemFileHandling;
+
+public class Product {
+	
+	int productId; 
+	String productName; 
+	double price; 
+	int quantity;
+	
+	
+	public Product(int productId, String productName, double price, int quantity) {
+		this.productId = productId;
+		this.productName = productName;
+		this.price = price;
+		this.quantity = quantity;
+	}
+
+	
+    public void displayProductDetails() {
+        System.out.println("ID: " + productId);
+        System.out.println("Name: " + productName);
+        System.out.println("Price: " + price);
+        System.out.println("Quantity: " + quantity);
+        System.out.println("--------------------------");
+    }
+
+	public int getProductId() {
+		return productId;
+	}
+
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+
+	public String getProductName() {
+		return productName;
+	}
+
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+
+	public double getPrice() {
+		return price;
+	}
+
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}	
+
+}
+
+
+
+ProductManager.java
+package productManagementSystemFileHandling;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class ProductManager {
+    private static final String FILE_NAME = "products.dat";
+
+    // Add product manually using DataOutputStream
+    public void addProduct(Product product) {
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(FILE_NAME, true))) {
+            dos.writeInt(product.getProductId());
+            dos.writeUTF(product.getProductName());
+            dos.writeDouble(product.getPrice());
+            dos.writeInt(product.getQuantity());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Read all products manually using DataInputStream
+    public ArrayList<Product> getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(FILE_NAME))) {
+            while (dis.available() > 0) {
+                int id = dis.readInt();
+                String name = dis.readUTF();
+                double price = dis.readDouble();
+                int quantity = dis.readInt();
+                products.add(new Product(id, name, price, quantity));
+            }
+        } catch (EOFException e) {
+            // End of file reached
+        } catch (FileNotFoundException e) {
+            System.out.println("No products found yet.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    public void viewAllProducts() {
+        ArrayList<Product> products = getAllProducts();
+        for (Product product : products) {
+            product.displayProductDetails();
+        }
+    }
+
+    public double calculateTotalInventoryValue() {
+        double total = 0;
+        ArrayList<Product> products = getAllProducts();
+        for (Product product : products) {
+            total += product.getPrice() * product.getQuantity();
+        }
+        return total;
+    }
+}
+
+
+
+Main.java
+package productManagementSystemFileHandling;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        ProductManager manager = new ProductManager();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+        do {
+            System.out.println("\n--- Product Management System ---");
+            System.out.println("1. Add Product");
+            System.out.println("2. View All Products");
+            System.out.println("3. Calculate Total Inventory Value");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Product ID: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+                    System.out.print("Enter Product Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Product Price: ");
+                    double price = scanner.nextDouble();
+                    System.out.print("Enter Product Quantity: ");
+                    int quantity = scanner.nextInt();
+                    Product product = new Product(id, name, price, quantity);
+                    manager.addProduct(product);
+                    break;
+
+                case 2:
+                    manager.viewAllProducts();
+                    break;
+
+                case 3:
+                    double total = manager.calculateTotalInventoryValue();
+                    System.out.println("Total Inventory Value: ₹" + total);
+                    break;
+
+                case 4:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 4);
+
+        scanner.close();
+    }
+}
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+
+Product OOPs
+
+
+product.java
+package productManagementSystemOOP;
+
+public class Product {
+    private int productId;
+    private String productName;
+    private double price;
+    private int quantity;
+
+    public Product(int productId, String productName, double price, int quantity) {
+        this.productId = productId;
+        this.productName = productName;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public void displayProductDetails() {
+        System.out.println("ID: " + productId);
+        System.out.println("Name: " + productName);
+        System.out.println("Price: ₹" + price);
+        System.out.println("Quantity: " + quantity);
+    }
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+}
+
+
+
+Discountable.java
+package productManagementSystemOOP;
+
+public interface Discountable {
+    double calculateDiscount();
+}
+
+
+
+
+Electronics.java
+package productManagementSystemOOP;
+
+public class Electronics extends Product implements Discountable {
+    private String warrantyPeriod;
+
+    public Electronics(int productId, String productName, double price, int quantity, String warrantyPeriod) {
+        super(productId, productName, price, quantity);
+        this.warrantyPeriod = warrantyPeriod;
+    }
+
+    @Override
+    public void displayProductDetails() {
+        super.displayProductDetails();
+        System.out.println("Warranty: " + warrantyPeriod);
+        System.out.println("Discount: ₹" + calculateDiscount());
+        System.out.println("----------------------------");
+    }
+
+    @Override
+    public double calculateDiscount() {
+        return getPrice() * 0.10; // 10% discount
+    }
+}
+
+
+
+
+furniture.java
+package productManagementSystemOOP;
+
+public class Furniture extends Product implements Discountable {
+    private String material;
+
+    public Furniture(int productId, String productName, double price, int quantity, String material) {
+        super(productId, productName, price, quantity);
+        this.material = material;
+    }
+
+    @Override
+    public void displayProductDetails() {
+        super.displayProductDetails();
+        System.out.println("Material: " + material);
+        System.out.println("Discount: ₹" + calculateDiscount());
+        System.out.println("----------------------------");
+    }
+
+    @Override
+    public double calculateDiscount() {
+        return getPrice() * 0.15; // 15% discount
+    }
+}
+
+
+groceries.java
+package productManagementSystemOOP;
+
+public class Groceries extends Product implements Discountable {
+    private String expiryDate;
+
+    public Groceries(int productId, String productName, double price, int quantity, String expiryDate) {
+        super(productId, productName, price, quantity);
+        this.expiryDate = expiryDate;
+    }
+
+    @Override
+    public void displayProductDetails() {
+        super.displayProductDetails();
+        System.out.println("Expiry Date: " + expiryDate);
+        System.out.println("Discount: ₹" + calculateDiscount());
+        System.out.println("----------------------------");
+    }
+
+    @Override
+    public double calculateDiscount() {
+        return getPrice() * 0.05; // 5% discount
+    }
+}
+
+
+
+
+main.java
+package productManagementSystemOOP;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<Discountable> products = new ArrayList<>();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("How many products do you want to add? ");
+        int count = sc.nextInt();
+
+        for (int i = 0; i < count; i++) {
+            System.out.println("\nEnter details for Product " + (i + 1) + ":");
+            System.out.print("Enter Product Type (1. Electronics, 2. Groceries, 3. Furniture): ");
+            int type = sc.nextInt();
+
+            System.out.print("Enter Product ID: ");
+            int id = sc.nextInt();
+
+            sc.nextLine(); // consume newline
+            System.out.print("Enter Product Name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter Price: ");
+            double price = sc.nextDouble();
+
+            System.out.print("Enter Quantity: ");
+            int qty = sc.nextInt();
+
+            sc.nextLine(); // consume newline
+            switch (type) {
+                case 1:
+                    System.out.print("Enter Warranty Period: ");
+                    String warranty = sc.nextLine();
+                    products.add(new Electronics(id, name, price, qty, warranty));
+                    break;
+                case 2:
+                    System.out.print("Enter Expiry Date (YYYY-MM-DD): ");
+                    String expiry = sc.nextLine();
+                    products.add(new Groceries(id, name, price, qty, expiry));
+                    break;
+                case 3:
+                    System.out.print("Enter Material: ");
+                    String material = sc.nextLine();
+                    products.add(new Furniture(id, name, price, qty, material));
+                    break;
+                default:
+                    System.out.println("Invalid product type.");
+                    i--; // repeat this iteration
+            }
+        }
+
+        // Display details
+        System.out.println("\n---- Product Details ----");
+        for (Discountable p : products) {
+            if (p instanceof Product) {
+                ((Product) p).displayProductDetails();
+            }
+        }
+
+        // Calculate total value after discount
+        double totalValue = 0;
+        for (Discountable p : products) {
+            Product prod = (Product) p;
+            double netPrice = prod.getPrice() - p.calculateDiscount();
+            totalValue += netPrice * prod.getQuantity();
+        }
+
+        System.out.println("\nTotal Inventory Value After Discount: ₹" + totalValue);
+
+        sc.close();
+    }
+}
+
+---------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+
+Product HashMap
+
+
+product.java
+package productHashmap;
+
+public class Product {
+    private int productId;
+    private String productName;
+    private double price;
+    private int quantity;
+
+    public Product(int productId, String productName, double price, int quantity) {
+        this.productId = productId;
+        this.productName = productName;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public void displayProductDetails() {
+        System.out.println("ID: " + productId);
+        System.out.println("Name: " + productName);
+        System.out.println("Price: ₹" + price);
+        System.out.println("Quantity: " + quantity);
+        System.out.println("-----------------------------");
+    }
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+
+}
+
+
+
+productManager.java
+package productHashmap;
+
+import java.util.*;
+
+public class ProductManager {
+    private HashMap<Integer, Product> productMap = new HashMap<>();
+
+    // Add new product
+    public void addProduct(Product product) {
+        if (productMap.containsKey(product.getProductId())) {
+            System.out.println("Product ID already exists.");
+        } else {
+            productMap.put(product.getProductId(), product);
+            System.out.println("Product added successfully.");
+        }
+    }
+
+    // View all products
+    public void viewAllProducts() {
+        if (productMap.isEmpty()) {
+            System.out.println("No products to display.");
+            return;
+        }
+
+        for (Product product : productMap.values()) {
+            product.displayProductDetails();
+        }
+    }
+
+    // Update product
+    public void updateProduct(int productId, Scanner scanner) {
+        if (!productMap.containsKey(productId)) {
+            System.out.println("Product ID not found.");
+            return;
+        }
+
+        Product product = productMap.get(productId);
+        System.out.print("Enter new name: ");
+        scanner.nextLine(); // clear buffer
+        product.setProductName(scanner.nextLine());
+
+        System.out.print("Enter new price: ");
+        product.setPrice(scanner.nextDouble());
+
+        System.out.print("Enter new quantity: ");
+        product.setQuantity(scanner.nextInt());
+
+        System.out.println("Product updated successfully.");
+    }
+
+    // Delete product
+    public void deleteProduct(int productId) {
+        if (productMap.remove(productId) != null) {
+            System.out.println("Product deleted successfully.");
+        } else {
+            System.out.println("Product ID not found.");
+        }
+    }
+
+    // Calculate total inventory value
+    public double calculateTotalInventoryValue() {
+        double total = 0;
+        for (Product product : productMap.values()) {
+            total += product.getPrice() * product.getQuantity();
+        }
+        return total;
+    }
+
+    // Sort products by price
+    public void sortProductsByPrice() {
+        if (productMap.isEmpty()) {
+            System.out.println("No products available.");
+            return;
+        }
+
+        List<Product> sortedList = new ArrayList<>(productMap.values());
+        sortedList.sort(Comparator.comparingDouble(Product::getPrice));
+
+        System.out.println("Products sorted by price:");
+        for (Product product : sortedList) {
+            product.displayProductDetails();
+        }
+    }
+}
+
+
+
+main.java
+package productHashmap;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        ProductManager manager = new ProductManager();
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\n--- Product Management System ---");
+            System.out.println("1. Add Product");
+            System.out.println("2. View All Products");
+            System.out.println("3. Update Product");
+            System.out.println("4. Delete Product");
+            System.out.println("5. Calculate Total Inventory Value");
+            System.out.println("6. Sort Products by Price");
+            System.out.println("7. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Product ID: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+                    System.out.print("Enter Product Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Product Price: ");
+                    double price = scanner.nextDouble();
+                    System.out.print("Enter Product Quantity: ");
+                    int quantity = scanner.nextInt();
+                    manager.addProduct(new Product(id, name, price, quantity));
+                    break;
+
+                case 2:
+                    manager.viewAllProducts();
+                    break;
+
+                case 3:
+                    System.out.print("Enter Product ID to Update: ");
+                    int updateId = scanner.nextInt();
+                    manager.updateProduct(updateId, scanner);
+                    break;
+
+                case 4:
+                    System.out.print("Enter Product ID to Delete: ");
+                    int deleteId = scanner.nextInt();
+                    manager.deleteProduct(deleteId);
+                    break;
+
+                case 5:
+                    double totalValue = manager.calculateTotalInventoryValue();
+                    System.out.println("Total Inventory Value: ₹" + totalValue);
+                    break;
+
+                case 6:
+                    manager.sortProductsByPrice();
+                    break;
+
+                case 7:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 7);
+
+        scanner.close();
+    }
+}
+
+
+--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
+
+
+
+Student FileHandling
+
+
+student.java
+package studentManagement;
+
+public class Student {
+    private int rollNo;
+    private String name;
+    private double marks;
+
+    public Student(int rollNo, String name, double marks) {
+        this.rollNo = rollNo;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    public void displayStudentDetails() {
+        System.out.println("Roll No: " + rollNo);
+        System.out.println("Name: " + name);
+        System.out.println("Marks: " + marks);
+        System.out.println("---------------------------");
+    }
+
+    public String toCSV() {
+        return rollNo + "," + name + "," + marks;
+    }
+
+	public int getRollNo() {
+		return rollNo;
+	}
+
+	public void setRollNo(int rollNo) {
+		this.rollNo = rollNo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getMarks() {
+		return marks;
+	}
+
+	public void setMarks(double marks) {
+		this.marks = marks;
+	}
+
+
+}
+
+
+
+studentmanagement.java
+package studentManagement;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class StudentManagement {
+    private static final String FILE_NAME = "students.dat";
+
+    // Add student to file
+    public void addStudent(Student student) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            writer.write(student.toCSV());
+            writer.newLine();
+            System.out.println("Student added successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // View all students
+    public void viewAllStudents() {
+        ArrayList<Student> students = readAllStudents();
+        if (students.isEmpty()) {
+            System.out.println("No students found.");
+        } else {
+            for (Student s : students) {
+                s.displayStudentDetails();
+            }
+        }
+    }
+
+    // Search by roll no
+    public void searchStudent(int rollNo) {
+        ArrayList<Student> students = readAllStudents();
+        boolean found = false;
+        for (Student s : students) {
+            if (s.getRollNo() == rollNo) {
+                s.displayStudentDetails();
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Student not found.");
+        }
+    }
+
+    // Delete student
+    public void deleteStudent(int rollNo) {
+        ArrayList<Student> students = readAllStudents();
+        boolean removed = students.removeIf(s -> s.getRollNo() == rollNo);
+        if (removed) {
+            overwriteFile(students);
+            System.out.println("Student deleted.");
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+
+    // Calculate average marks
+    public double calculateAverageMarks() {
+        ArrayList<Student> students = readAllStudents();
+        double total = 0;
+        for (Student s : students) {
+            total += s.getMarks();
+        }
+        return students.isEmpty() ? 0 : total / students.size();
+    }
+
+    // Read students from file
+    private ArrayList<Student> readAllStudents() {
+        ArrayList<Student> students = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                int roll = Integer.parseInt(parts[0]);
+                String name = parts[1];
+                double marks = Double.parseDouble(parts[2]);
+                students.add(new Student(roll, name, marks));
+            }
+        } catch (FileNotFoundException e) {
+            // Ignore, file will be created
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return students;
+    }
+
+    // Rewrite file after delete
+    private void overwriteFile(ArrayList<Student> students) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            for (Student s : students) {
+                writer.write(s.toCSV());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+main.java
+package studentManagement;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        StudentManagement manager = new StudentManagement();
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\n--- Student Management System ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. View All Students");
+            System.out.println("3. Search Student by Roll No");
+            System.out.println("4. Delete Student by Roll No");
+            System.out.println("5. Calculate Average Marks");
+            System.out.println("6. Exit");
+            System.out.print("Enter choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Roll No: ");
+                    int roll = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Marks: ");
+                    double marks = scanner.nextDouble();
+                    manager.addStudent(new Student(roll, name, marks));
+                    break;
+                case 2:
+                    manager.viewAllStudents();
+                    break;
+                case 3:
+                    System.out.print("Enter Roll No: ");
+                    int searchId = scanner.nextInt();
+                    manager.searchStudent(searchId);
+                    break;
+                case 4:
+                    System.out.print("Enter Roll No to Delete: ");
+                    int delId = scanner.nextInt();
+                    manager.deleteStudent(delId);
+                    break;
+                case 5:
+                    double avg = manager.calculateAverageMarks();
+                    System.out.println("Average Marks: " + avg);
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 6);
+
+        scanner.close();
+    }
+}
+
+------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+
+
+
+Student OOPs
+
+student.java
+package studentManagement;
+public class Student implements Gradable {
+    private int rollNo;
+    private String name;
+    private double marks;
+
+    public Student(int rollNo, String name, double marks) {
+        this.rollNo = rollNo;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    // Getters
+    public int getRollNo() {
+        return rollNo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getMarks() {
+        return marks;
+    }
+
+    public void setMarks(double marks) {
+        this.marks = marks;
+    }
+
+    // Implementing the interface method
+    @Override
+    public String calculateGrade() {
+        if (marks >= 90) return "A+";
+        else if (marks >= 75) return "A";
+        else if (marks >= 60) return "B";
+        else if (marks >= 45) return "C";
+        else return "F";
+    }
+
+    public void displayStudentDetails() {
+        System.out.println("Roll No : " + rollNo);
+        System.out.println("Name    : " + name);
+        System.out.println("Marks   : " + marks);
+        System.out.println("Grade   : " + calculateGrade());
+        System.out.println("-----------------------------");
+    }
+}
+
+
+
+
+studentmanagement.java
+package studentManagement;
+
+import java.util.ArrayList;
+
+public class StudentManager {
+    private ArrayList<Student> studentList = new ArrayList<>();
+
+    public void addStudent(Student s) {
+        studentList.add(s);
+        System.out.println("Student added successfully.\n");
+    }
+
+    public void viewAllStudents() {
+        if (studentList.isEmpty()) {
+            System.out.println("No students to display.\n");
+            return;
+        }
+
+        System.out.println("\n--- All Student Details ---");
+        for (Student s : studentList) {
+            s.displayStudentDetails();
+        }
+    }
+
+    public void calculateAverageMarks() {
+        if (studentList.isEmpty()) {
+            System.out.println("No students to calculate average.\n");
+            return;
+        }
+
+        double total = 0;
+        for (Student s : studentList) {
+            total += s.getMarks();
+        }
+
+        double average = total / studentList.size();
+        System.out.println("Average Marks: " + average + "\n");
+    }
+}
+
+
+
+gradeable.java
+package studentManagement;
+
+public interface Gradable {
+    String calculateGrade();
+}
+
+
+
+
+main.java
+package studentManagement;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        StudentManager manager = new StudentManager();
+
+        int choice;
+        do {
+            System.out.println("--- Student Management System ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. View All Students");
+            System.out.println("3. Calculate Average Marks");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Roll No: ");
+                    int roll = sc.nextInt();
+                    sc.nextLine(); // clear buffer
+
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("Enter Marks: ");
+                    double marks = sc.nextDouble();
+
+                    Student s = new Student(roll, name, marks);
+                    manager.addStudent(s);
+                    break;
+
+                case 2:
+                    manager.viewAllStudents();
+                    break;
+
+                case 3:
+                    manager.calculateAverageMarks();
+                    break;
+
+                case 4:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.\n");
+            }
+
+        } while (choice != 4);
+
+        sc.close();
+    }
+}
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+Student Hashmap
+
+student.java
+package studentManagement;
+public class Student {
+    private int rollNo;
+    private String name;
+    private double marks;
+
+    public Student(int rollNo, String name, double marks) {
+        this.rollNo = rollNo;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    public int getRollNo() {
+        return rollNo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getMarks() {
+        return marks;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMarks(double marks) {
+        this.marks = marks;
+    }
+    
+    public String getGrade() {
+        if (marks >= 90 && marks <= 100) {
+            return "A+";
+        } else if (marks >= 75 && marks < 90) {
+            return "A";
+        } else if (marks >= 60 && marks < 75) {
+            return "B";
+        } else if (marks >= 45 && marks < 60) {
+            return "C";
+        } else if (marks >= 0 && marks < 45) {
+            return "F";
+        } else {
+            return "Invalid Marks";
+        }
+    }
+
+
+    public void displayStudentDetails() {
+        System.out.println("Roll No : " + rollNo);
+        System.out.println("Name    : " + name);
+        System.out.println("Marks   : " + marks);
+        System.out.println("Grade   : " + getGrade());
+        System.out.println("-----------------------------");
+    }
+}
+
+
+
+
+
+
+
+studentmanager.java
+package studentManagement;
+
+import java.util.*;
+
+public class StudentManager {
+    private HashMap<Integer, Student> students = new HashMap<>();
+    private Scanner scanner = new Scanner(System.in);
+
+    public void addStudent() {
+        System.out.print("Enter Roll No: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        if (students.containsKey(rollNo)) {
+            System.out.println("Student with this Roll No already exists.");
+            return;
+        }
+
+        System.out.print("Enter Name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter Marks: ");
+        double marks = scanner.nextDouble();
+
+        Student student = new Student(rollNo, name, marks);
+        students.put(rollNo, student);
+        System.out.println("Student added successfully.\n");
+    }
+
+    public void viewAllStudents() {
+        if (students.isEmpty()) {
+            System.out.println("No students to display.\n");
+            return;
+        }
+
+        System.out.println("--- All Student Details ---");
+        for (Student s : students.values()) {
+            s.displayStudentDetails();
+        }
+    }
+
+    public void updateStudent() {
+        System.out.print("Enter Roll No to update: ");
+        int rollNo = scanner.nextInt();
+        scanner.nextLine();
+
+        Student student = students.get(rollNo);
+        if (student == null) {
+            System.out.println("Student not found.\n");
+            return;
+        }
+
+        System.out.print("Enter New Name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter New Marks: ");
+        double marks = scanner.nextDouble();
+
+        student.setName(name);
+        student.setMarks(marks);
+        System.out.println("Student updated successfully.\n");
+    }
+
+    public void deleteStudent() {
+        System.out.print("Enter Roll No to delete: ");
+        int rollNo = scanner.nextInt();
+
+        if (students.remove(rollNo) != null) {
+            System.out.println("Student deleted.\n");
+        } else {
+            System.out.println("Student not found.\n");
+        }
+    }
+
+    public void calculateAverageMarks() {
+        if (students.isEmpty()) {
+            System.out.println("No students in the system.\n");
+            return;
+        }
+
+        double total = 0;
+        for (Student s : students.values()) {
+            total += s.getMarks();
+        }
+
+        double average = total / students.size();
+        System.out.println("Average Marks: " + average + "\n");
+    }
+}
+
+
+
+
+main.java
+package studentManagement;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        StudentManager manager = new StudentManager();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+        do {
+            System.out.println("\n--- Student Management System ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. View All Students");
+            System.out.println("3. Update Student");
+            System.out.println("4. Delete Student");
+            System.out.println("5. Calculate Average Marks");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1: manager.addStudent(); break;
+                case 2: manager.viewAllStudents(); break;
+                case 3: manager.updateStudent(); break;
+                case 4: manager.deleteStudent(); break;
+                case 5: manager.calculateAverageMarks(); break;
+                case 6: System.out.println("Exiting..."); break;
+                default: System.out.println("Invalid choice!");
+            }
+        } while (choice != 6);
+    }
+}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+Student Array
+
+student.java
+package studentManagement;
+
+public class Student {
+    private int rollNumber;
+    private String name;
+    private double marks;
+
+    public Student(int rollNumber, String name, double marks) {
+        this.rollNumber = rollNumber;
+        this.name = name;
+        this.marks = marks;
+    }
+
+    public int getRollNumber() {
+        return rollNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getMarks() {
+        return marks;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMarks(double marks) {
+        this.marks = marks;
+    }
+
+    public String getGrade() {
+        if (marks >= 90) return "A+";
+        else if (marks >= 80) return "A";
+        else if (marks >= 70) return "B+";
+        else if (marks >= 60) return "B";
+        else if (marks >= 50) return "C";
+        else if (marks >= 40) return "D";
+        else return "F";
+    }
+
+    public void display() {
+        System.out.println("Roll No: " + rollNumber + ", Name: " + name +
+                ", Marks: " + marks + ", Grade: " + getGrade());
+    }
+}
+
+
+
+studentmanager.java
+package studentManagement;
+
+import java.util.ArrayList;
+
+public class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    public void addStudent(Student s) {
+        for (Student st : students) {
+            if (st.getRollNumber() == s.getRollNumber()) {
+                System.out.println("Student with this roll number already exists.");
+                return;
+            }
+        }
+        students.add(s);
+        System.out.println("Student added successfully.");
+    }
+
+    public void viewAllStudents() {
+        if (students.isEmpty()) {
+            System.out.println("No students found.");
+        } else {
+            for (Student s : students) {
+                s.display();
+            }
+        }
+    }
+
+    public void updateStudent(int roll, String newName, double newMarks) {
+        for (Student s : students) {
+            if (s.getRollNumber() == roll) {
+                s.setName(newName);
+                s.setMarks(newMarks);
+                System.out.println("Student updated.");
+                return;
+            }
+        }
+        System.out.println("Student not found.");
+    }
+
+    public void deleteStudent(int roll) {
+        for (Student s : students) {
+            if (s.getRollNumber() == roll) {
+                students.remove(s);
+                System.out.println("Student deleted.");
+                return;
+            }
+        }
+        System.out.println("Student not found.");
+    }
+
+    public void calculateAverageMarks() {
+        if (students.isEmpty()) {
+            System.out.println("No students available.");
+            return;
+        }
+        double sum = 0;
+        for (Student s : students) {
+            sum += s.getMarks();
+        }
+        double avg = sum / students.size();
+        System.out.println("Average Marks: " + avg);
+    }
+}
+
+
+
+
+main.java
+package studentManagement;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        StudentManager manager = new StudentManager();
+
+        int choice;
+        do {
+            System.out.println("\n--- Student Management System ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. View All Students");
+            System.out.println("3. Update Student");
+            System.out.println("4. Delete Student");
+            System.out.println("5. Calculate Average Marks");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Roll Number: ");
+                    int roll = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Marks: ");
+                    double marks = sc.nextDouble();
+                    manager.addStudent(new Student(roll, name, marks));
+                    break;
+
+                case 2:
+                    manager.viewAllStudents();
+                    break;
+
+                case 3:
+                    System.out.print("Enter Roll Number to update: ");
+                    int upRoll = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter New Name: ");
+                    String newName = sc.nextLine();
+                    System.out.print("Enter New Marks: ");
+                    double newMarks = sc.nextDouble();
+                    manager.updateStudent(upRoll, newName, newMarks);
+                    break;
+
+                case 4:
+                    System.out.print("Enter Roll Number to delete: ");
+                    int delRoll = sc.nextInt();
+                    manager.deleteStudent(delRoll);
+                    break;
+
+                case 5:
+                    manager.calculateAverageMarks();
+                    break;
+
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
+
+
+-------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+
+
+EmployeeFileHandling
+
+employee.java
+package employeeManagement;
+
+public class Employee {
+    private int id;
+    private String name;
+    private String department;
+    private double salary;
+
+    public Employee(int id, String name, String department, double salary) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+
+    public void setName(String name) { this.name = name; }
+    public void setDepartment(String department) { this.department = department; }
+    public void setSalary(double salary) { this.salary = salary; }
+
+    public void display() {
+        System.out.println("ID: " + id + ", Name: " + name + ", Department: " + department + ", Salary: " + salary);
+    }
+}
+
+
+
+employeemanager.java
+package employeeManagement;
+
+import java.io.*;
+import java.util.*;
+
+public class EmployeeManager {
+    private static final String FILE_PATH = "employees.txt";
+
+    public void addEmployee(Employee emp) {
+        try {
+            FileWriter fw = new FileWriter(FILE_PATH, true);
+            fw.write(emp.getId() + "," + emp.getName() + "," + emp.getDepartment() + "," + emp.getSalary() + "\n");
+            fw.close();
+            System.out.println("Employee added successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void viewAllEmployees() {
+        try {
+            File file = new File(FILE_PATH);
+            if (!file.exists()) {
+                System.out.println("No employee records found.");
+                return;
+            }
+
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    int id = Integer.parseInt(parts[0]);
+                    String name = parts[1];
+                    String dept = parts[2];
+                    double salary = Double.parseDouble(parts[3]);
+                    Employee emp = new Employee(id, name, dept, salary);
+                    emp.display();
+                }
+            }
+            scanner.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+main.java
+package employeeManagement;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        EmployeeManager manager = new EmployeeManager();
+
+        int choice;
+        do {
+            System.out.println("\n--- Employee Management System ---");
+            System.out.println("1. Add Employee");
+            System.out.println("2. View All Employees");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine(); // consume newline
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Department: ");
+                    String dept = sc.nextLine();
+                    System.out.print("Enter Salary: ");
+                    double salary = sc.nextDouble();
+
+                    Employee emp = new Employee(id, name, dept, salary);
+                    manager.addEmployee(emp);
+                    break;
+                case 2:
+                    manager.viewAllEmployees();
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 3);
+
+        sc.close();
+    }
+}
+
+-------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+
+
+Employee OOPs
+
+employee.java
+package employeeManagement;
+
+public class Employee implements Payable {
+    private int id;
+    private String name;
+    private String department;
+    private double salary;
+
+    public Employee(int id, String name, String department, double salary) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+
+    public void setName(String name) { this.name = name; }
+    public void setDepartment(String department) { this.department = department; }
+    public void setSalary(double salary) { this.salary = salary; }
+
+    public void display() {
+        System.out.println("ID: " + id + ", Name: " + name +
+                ", Dept: " + department + ", Salary: ₹" + salary +
+                ", Bonus: ₹" + calculateBonus());
+    }
+
+    @Override
+    public double calculateBonus() {
+        return (salary > 50000) ? salary * 0.10 : salary * 0.05;
+    }
+}
+
+
+
+
+payable.java
+package employeeManagement;
+
+public interface Payable {
+    double calculateBonus();
+}
+
+
+
+
+
+
+employeemanager.java
+package employeeManagement;
+
+import java.util.ArrayList;
+
+public class EmployeeManager {
+    private ArrayList<Employee> employeeList = new ArrayList<>();
+
+    public void addEmployee(Employee emp) {
+        employeeList.add(emp);
+        System.out.println("Employee added successfully!");
+    }
+
+    public void viewAllEmployees() {
+        if (employeeList.isEmpty()) {
+            System.out.println("No employees to display.");
+        } else {
+            for (Employee emp : employeeList) {
+                emp.display(); // Bonus included in display
+            }
+        }
+    }
+
+    public void updateEmployee(int id, String newName, String newDept, double newSalary) {
+        for (Employee emp : employeeList) {
+            if (emp.getId() == id) {
+                emp.setName(newName);
+                emp.setDepartment(newDept);
+                emp.setSalary(newSalary);
+                System.out.println("Employee updated.");
+                return;
+            }
+        }
+        System.out.println("Employee not found.");
+    }
+
+    public void deleteEmployee(int id) {
+        for (Employee emp : employeeList) {
+            if (emp.getId() == id) {
+                employeeList.remove(emp);
+                System.out.println("Employee deleted.");
+                return;
+            }
+        }
+        System.out.println("Employee not found.");
+    }
+
+    public void calculateTotalSalaryWithBonus() {
+        double total = 0;
+        for (Employee emp : employeeList) {
+            total += emp.getSalary() + emp.calculateBonus();
+        }
+        System.out.println("Total Salary (with Bonus): ₹" + total);
+    }
+}
+
+
+main.java
+package employeeManagement;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        EmployeeManager manager = new EmployeeManager();
+
+        int choice;
+        do {
+            System.out.println("\n--- Employee Management System ---");
+            System.out.println("1. Add Employee");
+            System.out.println("2. View All Employees");
+            System.out.println("3. Update Employee");
+            System.out.println("4. Delete Employee");
+            System.out.println("5. View Total Salary with Bonus");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine(); // consume newline
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Department: ");
+                    String dept = sc.nextLine();
+                    System.out.print("Enter Salary: ");
+                    double salary = sc.nextDouble();
+                    manager.addEmployee(new Employee(id, name, dept, salary));
+                    break;
+                case 2:
+                    manager.viewAllEmployees();
+                    break;
+                case 3:
+                    System.out.print("Enter ID to update: ");
+                    int upId = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter New Name: ");
+                    String newName = sc.nextLine();
+                    System.out.print("Enter New Department: ");
+                    String newDept = sc.nextLine();
+                    System.out.print("Enter New Salary: ");
+                    double newSalary = sc.nextDouble();
+                    manager.updateEmployee(upId, newName, newDept, newSalary);
+                    break;
+                case 4:
+                    System.out.print("Enter ID to delete: ");
+                    int delId = sc.nextInt();
+                    manager.deleteEmployee(delId);
+                    break;
+                case 5:
+                    manager.calculateTotalSalaryWithBonus();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
+
+----------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+
+employee hashmap
+
+employee.java
+package employeeManagement;
+
+public class Employee {
+    private int id;
+    private String name;
+    private String department;
+    private double salary;
+
+    public Employee(int id, String name, String department, double salary) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+
+    public void setName(String name) { this.name = name; }
+    public void setDepartment(String department) { this.department = department; }
+    public void setSalary(double salary) { this.salary = salary; }
+
+    public void display() {
+        System.out.println("ID: " + id + ", Name: " + name +
+                ", Department: " + department + ", Salary: ₹" + salary);
+    }
+}
+
+
+
+
+employeemanager.java
+package employeeManagement;
+
+import java.util.*;
+
+public class EmployeeManager {
+    private HashMap<Integer, Employee> employeeMap = new HashMap<>();
+
+    public void addEmployee(Employee emp) {
+        if (employeeMap.containsKey(emp.getId())) {
+            System.out.println("Employee with this ID already exists.");
+        } else {
+            employeeMap.put(emp.getId(), emp);
+            System.out.println("Employee added.");
+        }
+    }
+
+    public void viewAllEmployees() {
+        if (employeeMap.isEmpty()) {
+            System.out.println("No employees found.");
+        } else {
+            for (Employee emp : employeeMap.values()) {
+                emp.display();
+            }
+        }
+    }
+
+    public void updateEmployee(int id, String newName, String newDept, double newSalary) {
+        Employee emp = employeeMap.get(id);
+        if (emp != null) {
+            emp.setName(newName);
+            emp.setDepartment(newDept);
+            emp.setSalary(newSalary);
+            System.out.println("Employee updated.");
+        } else {
+            System.out.println("Employee not found.");
+        }
+    }
+
+    public void deleteEmployee(int id) {
+        if (employeeMap.remove(id) != null) {
+            System.out.println("Employee deleted.");
+        } else {
+            System.out.println("Employee not found.");
+        }
+    }
+
+    public void calculateTotalSalary() {
+        double total = 0;
+        for (Employee emp : employeeMap.values()) {
+            total += emp.getSalary();
+        }
+        System.out.println("Total Salary of All Employees: ₹" + total);
+    }
+}
+
+
+
+
+main.java
+package employeeManagement;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        EmployeeManager manager = new EmployeeManager();
+
+        int choice;
+        do {
+            System.out.println("\n--- Employee Management System ---");
+            System.out.println("1. Add Employee");
+            System.out.println("2. View All Employees");
+            System.out.println("3. Update Employee");
+            System.out.println("4. Delete Employee");
+            System.out.println("5. Calculate Total Salary");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Department: ");
+                    String dept = sc.nextLine();
+                    System.out.print("Enter Salary: ");
+                    double salary = sc.nextDouble();
+                    manager.addEmployee(new Employee(id, name, dept, salary));
+                    break;
+
+                case 2:
+                    manager.viewAllEmployees();
+                    break;
+
+                case 3:
+                    System.out.print("Enter ID to update: ");
+                    int upId = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter New Name: ");
+                    String newName = sc.nextLine();
+                    System.out.print("Enter New Department: ");
+                    String newDept = sc.nextLine();
+                    System.out.print("Enter New Salary: ");
+                    double newSalary = sc.nextDouble();
+                    manager.updateEmployee(upId, newName, newDept, newSalary);
+                    break;
+
+                case 4:
+                    System.out.print("Enter ID to delete: ");
+                    int delId = sc.nextInt();
+                    manager.deleteEmployee(delId);
+                    break;
+
+                case 5:
+                    manager.calculateTotalSalary();
+                    break;
+
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
